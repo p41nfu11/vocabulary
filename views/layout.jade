@@ -1,0 +1,24 @@
+!!!
+html
+	head
+		link(rel='stylesheet', href='/css/bootstrap.css')
+		link(rel='stylesheet', href='/css/docs.css')
+		script(src='/js/jquery-1.9.1.min.js', type='text/javascript')
+		script(src='/js/bootstrap.min.js', type='text/javascript')
+	body
+		header(class="navbar navbar-inverse navbar-fixed-top",role="banner")
+			div(class="container navbar-inverse")
+				div(class="navbar-header navbar-inverse")
+					button(class="navbar-toggle",type="button",data-toggle="collapse",data-target=".bs-navbar-collapse")
+						span(class="sr-only") Toggle navigation
+						span(class="icon-bar")
+						span(class="icon-bar")
+						span(class="icon-bar")
+					a(href="/" , class="navbar-brand") Vocabulary
+				nav(class="collapse navbar-collapse bs-navbar-collapse",role="navigation")
+					ul(class="nav navbar-nav")
+						li
+							a(href="/logout") Logout
+						li
+							a(href="/lists") Home
+		block content

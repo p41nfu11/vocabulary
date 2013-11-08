@@ -1,0 +1,17 @@
+html
+	head
+		link(rel='stylesheet', href='/css/bootstrap.css')
+		link(rel='stylesheet', href='/css/docs.css')
+		script(src='/js/jquery-1.9.1.min.js', type='text/javascript')
+		script(src='/js/bootstrap.min.js', type='text/javascript')
+	body(style="background-color:black")
+		div(style="background-image:url('../img/head.png');background-size:cover;background-repeat:no-repeat;position: absolute; top:0; width:100%; height: 100%;")
+			div(style="top: 50%; right: 10%; position: absolute;")
+				div(class='container')
+					div(class="hero-unit", style="color: #FFFFFF; background-color:rgba(0,0,0,0.3); padding: 2px 25px; border-radius:25px;")
+						h1 Vocabulary
+						p learn something new
+						p
+							form(METHOD="LINK", ACTION="/fbauth")
+								input(type="submit", value="Login with facebook", class='btn btn-large btn-primary')
+						p Hey, don't worry! We promise not to post anything on your wall.
