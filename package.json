@@ -11,6 +11,6 @@
     "passport": "*",
     "passport-facebook": "*",
     "mongoose": "3.6.5",
-    
+    "express-mongoose": "*"
   }
 }

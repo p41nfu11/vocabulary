@@ -3,12 +3,13 @@
  * get API
  */
 
-var list = require('../models/list');
-var word = require('../models/word');
+var List = require('../models/list');
+var Word = require('../models/word');
+
 
 exports.words = function(req, res){
   	process.nextTick(function(){
-		var query = word.find({'fbId': req.user.fbId});
+		var query = Word.find({'fbId': req.user.fbId});
 		query.exec(function(err, words){
 			res.send(words);
 		});
@@ -17,36 +18,27 @@ exports.words = function(req, res){
 
 exports.lists = function(req, res){
   	process.nextTick(function(){
-		var query = list.find({ 'owners': { $in: [ req.user ] } });
-		query.exec(function(err, lists){
-			if(err)
-			{
-				console.log('err trying to find lists');	
-				res.send(404);
-			}
-			console.log(lists);
-			res.send(lists);
-		});
+  		res.send(List.getListOwnedByUser(req.user));
 	});
 };
 
 exports.wordsByList = function(req, res){
   	process.nextTick(function(){
-		var query = list.findOne({ '_id': req.params.id }).populate('words');
-		query.exec(function(err, list){
-			if(err)
-			{
-				console.log('err trying to find list');	
-				res.send(404);
-			}
-			res.send(list.words);
+  		var list = List.getList(req.params.id);
+  		list.exec(function(err, list){
+  			if(err){
+  				res.send(404);
+  			}
+  			else{
+  				res.send(list.getWords());
+  			}
 		});
 	});
 };
 
 exports.wordById = function(req, res){
   	process.nextTick(function(){
-		var query = word.findOne({ '_id': req.params.id });
+		var query = Word.findOne({ '_id': req.params.id });
 		query.exec(function(err, word){
 			if(err)
 			{
@@ -60,7 +52,7 @@ exports.wordById = function(req, res){
 exports.addList = function (request, response) {
     var listData = request.body;
     console.log(listData);
-    var newList = new list();
+    var newList = new List();
     newList.title = listData.title || 'Default title';
     newList.text = listData.description || 'Default description';
     newList.createdDate = listData.createdDate || new Date();
@@ -79,7 +71,7 @@ exports.addWord = function (request, response) {
     var wordData = request.body.word;
     var listId = request.body.listId;
     
-    var newWord = new word();
+    var newWord = new Word();
     newWord.word = wordData.word || 'Default title';
     newWord.createdDate = wordData.createdDate || new Date();
     newWord.translations.push(wordData.translation);
@@ -97,7 +89,7 @@ exports.addWord = function (request, response) {
 	});	
 
     process.nextTick(function(){
-		var query = list.findOne({ '_id': listId });
+		var query = List.findOne({ '_id': listId });
 		query.exec(function(err, list){
 			if(err)
 			{
@@ -121,9 +113,7 @@ exports.listAddOwner = function (request, response) {
 	var userId = request.user._id; 
 	var listId = request.body.listId;
 
-	console.log('user = ' + userId);
-	console.log(listId);
-	var query = list.findOne({ '_id': listId });
+	var query = List.findOne({ '_id': listId });
 		query.exec(function(err, list){
 			if(err)
 			{
@@ -142,7 +132,7 @@ exports.listAddOwner = function (request, response) {
 
 exports.updateWord = function(request, response){
 	var data = request.body;
-	word.findOne({ _id:data._id },function(err,doc){
+	Word.findOne({ _id:data._id },function(err,doc){
 	    if(err)
 	    {
 	    	response.send(404);
@@ -164,7 +154,7 @@ exports.updateWord = function(request, response){
 
 exports.addTranslation = function(request, response){
 	var data = request.body;
-	word.findOne({ _id:data.wordId },function(err,doc){
+	Word.findOne({ _id:data.wordId },function(err,doc){
 	    if(err)
 	    {
 	    	response.send(404);
@@ -187,7 +177,7 @@ exports.removeTranslation = function(request, response){
 	var w = request.body.word;
 	var t = request.body.translationToRemove;
 	console.log(request.body);
-	word.findOne({ _id:w._id },function(err,doc){
+	Word.findOne({ _id:w._id },function(err,doc){
 	    if(err)
 	    {
 	    	response.send(404);
@@ -213,7 +203,7 @@ exports.removeTranslation = function(request, response){
 }
 
 exports.removeList = function(request, response){
-	list.find({ _id:request.body._id },function(err,docs){
+	List.find({ _id:request.body._id },function(err,docs){
 	    if(err)
 	    {
 	    	response.send(404);
@@ -229,7 +219,7 @@ exports.removeList = function(request, response){
 }
 
 exports.removeWord = function (request, response) {
-	word.find({ _id:request.body._id },function(err,docs){
+	Word.find({ _id:request.body._id },function(err,docs){
 	    if(err)
 	    {
 	    	response.send(404);
@@ -248,7 +238,7 @@ exports.updateWordWithGuess = function(request, response){
 	var wordToUpdate = request.body.word;
 	var guess = request.body.guess;
 
-	word.findOne({ _id:wordToUpdate._id },function(err,w){
+	Word.findOne({ _id:wordToUpdate._id },function(err,w){
 	    if(err)
 	    {
 	    	response.send(404);
